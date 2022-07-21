@@ -1,0 +1,23 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+caption figure 1
+title IDK Doc Features v1.0
+
+* IDK-Client
+** Repository
+*** Doc
+*** Table
+*** Code
+** Search
+*** By Tag
+*** By Type
+*** By Keywords
+**** Title
+**** Content
+** Share
+*** One-Time Share
+*** Long-Time Share
+
+
+@endmindmap
