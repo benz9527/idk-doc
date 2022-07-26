@@ -11,7 +11,15 @@ import (
 
 func Test_get_allow_headers_as_one_line_without_end_sep(t *testing.T) {
 	asserter := assert.New(t)
-	expected := `Access-Control-Allow-Headers, Authorization, User-Agent, Keep-Alive, Content-Type, X-Requested-With, X-CSRF-Token, AccessToken, Token`
-	actual := getAllowHeaders()
-	asserter.Equal(expected, actual)
+	_, actual := getAllowHeaders()
+	expectedSize := 9
+	asserter.Equal(expectedSize, actual)
+}
+
+func Test_get_allow_headers_as_one_line_without_end_sep_with_additional(t *testing.T) {
+	asserter := assert.New(t)
+	additional := `Access-Control-Allow-Headers, Authorization`
+	_, actual := getAllowHeaders(additional)
+	expectedSize := 9
+	asserter.Equal(expectedSize, actual)
 }

@@ -6,23 +6,28 @@ package middleware
 import (
 	"strings"
 
+	"idk-doc/lib/collections"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func CORSware() fiber.Handler {
+	headers, _ := getAllowHeaders()
+	exposed, _ := getExposeHeaders()
+	methods, _ := getAllowMethods()
 	return cors.New(cors.Config{
 		AllowOrigins:     "*",
-		AllowHeaders:     getAllowHeaders(),
-		AllowMethods:     getAllowMethods(),
+		AllowHeaders:     headers,
+		AllowMethods:     methods,
 		AllowCredentials: true,
-		ExposeHeaders:    getExposeHeaders(),
+		ExposeHeaders:    exposed,
 		Next:             nil,
 	})
 }
 
-func getAllowHeaders() string {
-	headers := []string{
+func getAllowHeaders(headers ...string) (string, int) {
+	defaultHeaders := []string{
 		"Access-Control-Allow-Headers",
 		"Authorization",
 		"User-Agent",
@@ -33,22 +38,51 @@ func getAllowHeaders() string {
 		"AccessToken",
 		"Token",
 	}
-	return strings.Join(headers, ", ")
+	defaultHeaders = additionalAppend(defaultHeaders, headers...)
+	return strings.Join(defaultHeaders, ", "), len(defaultHeaders)
 }
 
-func getExposeHeaders() string {
-	headers := []string{
+func getExposeHeaders(headers ...string) (string, int) {
+	defaultHeaders := []string{
 		"Content-Length",
 		"Access-Control-Allow-Origin",
 		"Access-Control-Allow-Headers",
 		"Content-Type",
 	}
-	return strings.Join(headers, ", ")
+	defaultHeaders = additionalAppend(defaultHeaders, headers...)
+	return strings.Join(defaultHeaders, ", "), len(defaultHeaders)
 }
 
-func getAllowMethods() string {
-	methods := []string{
+// getAllowMethods
+func getAllowMethods(methods ...string) (string, int) {
+	defaultMethods := []string{
 		"GET", "POST", "DELETE", "PATCH", "PUT",
 	}
-	return strings.Join(methods, ", ")
+	defaultMethods = additionalAppend(defaultMethods, methods...)
+	return strings.Join(defaultMethods, ", "), len(defaultMethods)
+}
+
+func additionalAppend(original []string, others ...string) []string {
+	// Currently, we don't check if a string is available and correct for caller.
+	if len(others) > 0 {
+		for _, h := range others {
+			if strings.Contains(h, ",") {
+				unhandledList := strings.Split(h, ",")
+				for _, item := range unhandledList {
+					res := strings.Trim(item, " ")
+					if len(res) > 0 {
+						original = append(original, res)
+					}
+				}
+			} else if strings.Contains(h, " ") {
+				res := strings.Trim(h, " ")
+				if len(res) > 0 {
+					original = append(original, res)
+				}
+			}
+		}
+	}
+	// After do distinct operation, the final result is disordered.
+	original = collections.SliceStream[string](original).Distinct().ToSlice()
+	return original
 }
