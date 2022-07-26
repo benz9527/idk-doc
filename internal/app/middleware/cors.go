@@ -6,7 +6,7 @@ package middleware
 import (
 	"strings"
 
-	"idk-doc/lib/collections"
+	"github.com/benz9527/idk-doc/lib/collections"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

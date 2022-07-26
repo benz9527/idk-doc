@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"html/template"
 
-	"idk-doc/lib/collections"
+	"github.com/benz9527/idk-doc/lib/collections"
 )
 
 // URL requests with HTML or Javascript code will make browser

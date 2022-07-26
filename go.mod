@@ -1,4 +1,4 @@
-module idk-doc
+module github.com/benz9527/idk-doc
 
 go 1.18
 

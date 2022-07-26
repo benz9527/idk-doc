@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"idk-doc/lib/collections"
+	"github.com/benz9527/idk-doc/lib/collections"
 
 	"github.com/stretchr/testify/assert"
 )
