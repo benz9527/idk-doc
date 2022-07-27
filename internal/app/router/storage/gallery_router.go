@@ -19,6 +19,7 @@ func GalleryGroups(app *fiber.App) *fiber.App {
 	{
 		/*
 			TODO(Ben) Uploaded image should be compressed and marked with watermark.
+			An image should be associated to a doc instance.
 		*/
 		galleryAdmGroup.Post("")
 		/*

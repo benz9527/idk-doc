@@ -19,6 +19,8 @@ func AttachmentGroups(app *fiber.App) *fiber.App {
 	{
 		/*
 			TODO(Ben) Attachment should be enabled compress processing.
+			Attachment should be associated to a doc instance.
+			And it should be set a size limitation.
 		*/
 		attachmentAdmGroup.Post("")
 		/*

@@ -14,7 +14,7 @@ func CodeGroups(app *fiber.App) *fiber.App {
 		codeGroup.Get("/:codeId")
 		codeGroup.Get("/:codeId/metadata")
 		codeGroup.Get("/:codeId/tabs")
-		codeGroup.Get("/:codeId/tabs/:tabIndex")
+		codeGroup.Get("/:codeId/tabs/:tabId")
 	}
 
 	return app
