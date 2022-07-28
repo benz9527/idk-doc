@@ -5,15 +5,21 @@ package collections
 
 import "unsafe"
 
-func String2Bytes(src *string, len int) []byte {
+// String2Bytes
+// The reason here doesn't use the pointer is that
+// pointer will make the variable escape to heap then
+// GC will suffer from work pressure.
+// Pass a new one, it will be created at stack is faster than
+// pointer.
+func String2Bytes(src string) []byte {
 	return *(*[]byte)(unsafe.Pointer(&struct {
 		Data string
 		Cap  int
 		Len  int
 	}{
-		Data: *src,
-		Cap:  len,
-		Len:  len,
+		Data: src,
+		Cap:  len(src),
+		Len:  len(src),
 	}))
 }
 

@@ -11,7 +11,7 @@ type sliceStream[T comparable] struct {
 	source []T
 }
 
-func (s *sliceStream[T]) Distinct() *sliceStream[T] {
+func (s sliceStream[T]) Distinct() sliceStream[T] {
 	var res = make(map[T]string, len(s.source))
 	for _, v := range s.source {
 		if _, ok := res[v]; !ok {
@@ -24,20 +24,24 @@ func (s *sliceStream[T]) Distinct() *sliceStream[T] {
 		s.source[i] = k
 		i++
 	}
-	return s
+	return sliceStream[T]{
+		source: s.source,
+	}
 }
 
-func (s *sliceStream[T]) Sort(fn SortComparatorFn[T]) *sliceStream[T] {
+func (s sliceStream[T]) Sort(fn SortComparatorFn[T]) sliceStream[T] {
 	// TODO(Ben) Implement the sort details.
-	return s
+	return sliceStream[T]{
+		source: s.source,
+	}
 }
 
-func (s *sliceStream[T]) ToSlice() []T {
+func (s sliceStream[T]) ToSlice() []T {
 	return s.source
 }
 
-func SliceStream[T comparable](src []T) *sliceStream[T] {
-	return &sliceStream[T]{
+func SliceStream[T comparable](src []T) sliceStream[T] {
+	return sliceStream[T]{
 		source: src,
 	}
 }

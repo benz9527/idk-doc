@@ -21,7 +21,7 @@ func Test_no_mem_allocate_string_to_bytes(t *testing.T) {
 		's', 'o', 'u', 'r', 'c', 'e', ' ',
 		's', 't', 'r', 'i', 'n', 'g',
 	}
-	var res = String2Bytes(&source, len(source))
+	var res = String2Bytes(source)
 	asserter.Equal(expected, res)
 }
 
