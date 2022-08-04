@@ -5,6 +5,9 @@ package collections
 
 import "math"
 
+// Below implementation through the value semantics have better
+// performance than pointer semantics.
+
 type SortComparatorFn[T comparable] func(a, b T) int
 
 type sliceStream[T comparable] struct {
@@ -18,10 +21,11 @@ func (s sliceStream[T]) Distinct() sliceStream[T] {
 			res[v] = ""
 		}
 	}
-	s.source = make([]T, len(res))
+
+	s.source = make([]T, 0, 256)
 	i := 0
 	for k := range res {
-		s.source[i] = k
+		s.source = append(s.source, k)
 		i++
 	}
 	return sliceStream[T]{
