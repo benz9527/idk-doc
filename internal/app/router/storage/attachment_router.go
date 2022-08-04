@@ -11,10 +11,12 @@ func AttachmentGroups(app *fiber.App) *fiber.App {
 
 	attachmentGroup := app.Group(STORAGE_ATTACHEMTNS_PRE)
 	{
-		attachmentGroup.Get("/:attachmentId")
+		// We should provide the attachment type, otherwise it is
+		// difficult to recognize what about this.
+		attachmentGroup.Get("/:attachmentId.:attachmentType")
 	}
 
-	// MongoDB
+	// MinIO
 	attachmentAdmGroup := app.Get("/adm" + STORAGE_ATTACHEMTNS_PRE)
 	{
 		/*

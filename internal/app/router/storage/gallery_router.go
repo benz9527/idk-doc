@@ -11,10 +11,12 @@ func GalleryGroups(app *fiber.App) *fiber.App {
 
 	galleryGroup := app.Group(STORAGE_GALLERY_PRE)
 	{
-		galleryGroup.Get("/:imageId")
+		// In order to support non-static image like
+		// GIF. We should provide the type of image.
+		galleryGroup.Get("/:imageId.:imageType")
 	}
 
-	// MongoDB
+	// MinIO
 	galleryAdmGroup := app.Group("/adm" + STORAGE_GALLERY_PRE)
 	{
 		/*
