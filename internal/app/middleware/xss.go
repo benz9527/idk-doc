@@ -5,7 +5,7 @@ package middleware
 
 import "github.com/gofiber/fiber/v2"
 
-func XSSware() fiber.Handler {
+func XSS() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		ctx.Set("X-XSS-Protection", "1; mode=block")
 		ctx.Set("X-Content-Type-Options", "nosniff")

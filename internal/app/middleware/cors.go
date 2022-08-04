@@ -15,7 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-func CORSware() fiber.Handler {
+func CORS() fiber.Handler {
 	headers, _ := getAllowHeaders()
 	exposed, _ := getExposeHeaders()
 	methods, _ := getAllowMethods()

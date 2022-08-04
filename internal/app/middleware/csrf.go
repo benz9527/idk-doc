@@ -14,7 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/csrf"
 )
 
-func CSRFware() fiber.Handler {
+func CSRF() fiber.Handler {
 	return csrf.New(csrf.Config{
 		// Fetch from request:
 		// - "header:<xxx>"
