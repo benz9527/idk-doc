@@ -21,17 +21,17 @@ type yamlReader struct {
 	viper *viper.Viper
 }
 
-func newYamlReader(path, filename, extension string) intf.IConfigurationReader {
+func newYamlReader(dir, filename, extension string) intf.IConfigurationReader {
 	v := viper.New()
-	// Config path for viper, it will make viper read all files
-	// under the specific path. We should point out which file
+	// Config dir for viper, it will make viper read all files
+	// under the specific dir. We should point out which file
 	// should be read.
-	v.AddConfigPath(path)
+	v.AddConfigPath(dir)
 	v.SetConfigType(extension)
 	// Windows system uses the backslash, but below are also okay in viper.
-	v.SetConfigFile(fmt.Sprintf("%s/%s.%s", path, filename, extension))
+	v.SetConfigFile(fmt.Sprintf("%s/%s.%s", dir, filename, extension))
 	if err := v.ReadInConfig(); err != nil {
-		log.Fatalf("read from file [%s.%s] under path [%s] with error [%v]", filename, extension, path, err)
+		log.Fatalf("read from file [%s.%s] under dir [%s] with error [%v]", filename, extension, dir, err)
 	}
 	return &yamlReader{
 		viper: v,

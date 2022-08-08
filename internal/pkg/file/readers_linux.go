@@ -23,11 +23,11 @@ func NewConfigurationReader(fp string) intf.IConfigurationReader {
 		panic(fmt.Errorf("unknown backslash for config file path [%s] in linux", fp))
 	}
 
-	var path, filename, ext string
+	var dir, filename, ext string
 	last := strings.LastIndex(fp, "/")
 	if strings.HasPrefix(fp, "./") {
-		path, _ = filepath.Abs(path)
-		path = path + "/" + fp[2:last]
+		dir, _ = filepath.Abs(dir)
+		dir = dir + "/" + fp[2:last]
 	}
 
 	filename = fp[last+1:]
@@ -36,14 +36,14 @@ func NewConfigurationReader(fp string) intf.IConfigurationReader {
 		filename = res[0]
 		ext = res[1]
 	} else {
-		panic(fmt.Errorf("unable to parse file path [%s] with uncompleted info", fp))
+		panic(fmt.Errorf("unable to parse file dir [%s] with uncompleted info", fp))
 	}
 
 	switch strings.ToLower(ext) {
 	case "yaml", "yml":
-		return newYamlReader(path, filename, ext)
+		return newYamlReader(dir, filename, ext)
 	case "toml":
-		return newTomlReader(path, filename, ext)
+		return newTomlReader(dir, filename, ext)
 	default:
 		panic(fmt.Errorf("unknown and not support file extension [%s]", ext))
 	}

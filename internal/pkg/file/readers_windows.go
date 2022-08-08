@@ -21,13 +21,13 @@ func NewConfigurationReader(fp string) intf.IConfigurationReader {
 		panic(err)
 	}
 
-	var path, filename, ext string
+	var dir, filename, ext string
 	if strings.HasPrefix(fp, ".\\") {
-		path, _ = filepath.Abs(path) // Missing file path parameter suffix.
+		dir, _ = filepath.Abs(dir) // Missing file dir parameter suffix.
 	}
 
 	last := strings.LastIndex(fp, "\\")
-	path, filename = path+"\\"+fp[2:last], fp[last+1:]
+	dir, filename = dir+"\\"+fp[2:last], fp[last+1:]
 	if strings.Contains(filename, ".") {
 		res := strings.Split(filename, ".")
 		filename = res[0]
@@ -38,9 +38,9 @@ func NewConfigurationReader(fp string) intf.IConfigurationReader {
 
 	switch strings.ToLower(ext) {
 	case "yaml", "yml":
-		return newYamlReader(path, filename, ext)
+		return newYamlReader(dir, filename, ext)
 	case "toml":
-		return newTomlReader(path, filename, ext)
+		return newTomlReader(dir, filename, ext)
 	default:
 		panic(fmt.Errorf("unknown and not support file extension [%s]", ext))
 	}
