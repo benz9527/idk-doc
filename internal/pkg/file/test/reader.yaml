@@ -1,0 +1,20 @@
+reader:
+  myslice:
+    - {
+        name: "ben1",
+        work: "idk-doc1",
+        days: 100
+    }
+    - {
+        name: "ben2",
+        work: "idk-doc2",
+        days: 200
+    }
+  mystring: "This is a string"
+  myint64: 12345
+  myfloat64: 0.12345
+  mybool: true
+  myobj: {
+    name: "ben",
+    title: "gopher"
+  }
