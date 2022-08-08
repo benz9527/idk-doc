@@ -21,8 +21,8 @@ type tomlReader struct {
 	viper *viper.Viper
 }
 
-func newTomlReader(dir, filename, extension string) intf.IConfigurationReader {
-	v := viper.New()
+func newTomlReader(viper *viper.Viper, dir, filename, extension string) intf.IConfigurationReader {
+	v := viper
 	// Config dir for viper, it will make viper read all files
 	// under the specific dir. We should point out which file
 	// should be read.

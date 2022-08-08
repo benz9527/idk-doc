@@ -6,45 +6,46 @@ package file
 import (
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_read_a_not_exists_config(t *testing.T) {
 	asserter := assert.New(t)
-
+	v := viper.New()
 	notFoundFilepath := "./test/not_found"
 	fn := func() {
-		NewConfigurationReader(notFoundFilepath)
+		NewConfigurationReader(v, notFoundFilepath)
 	}
 	asserter.Panics(fn)
 }
 
 func Test_read_an_exists_but_not_support_config(t *testing.T) {
 	asserter := assert.New(t)
-
+	v := viper.New()
 	notSupportFilepath := "./test/reader.properties"
 	fn := func() {
-		NewConfigurationReader(notSupportFilepath)
+		NewConfigurationReader(v, notSupportFilepath)
 	}
 	asserter.Panics(fn)
 }
 
 func Test_read_an_exists_but_not_support_config_with_backslash(t *testing.T) {
 	asserter := assert.New(t)
-
+	v := viper.New()
 	notSupportFilepath := ".\\test\\reader.properties"
 	fn := func() {
-		NewConfigurationReader(notSupportFilepath)
+		NewConfigurationReader(v, notSupportFilepath)
 	}
 	asserter.Panics(fn)
 }
 
 func Test_read_an_exists_dir_without_filename(t *testing.T) {
 	asserter := assert.New(t)
-
+	v := viper.New()
 	onlyPath := "./test"
 	fn := func() {
-		NewConfigurationReader(onlyPath)
+		NewConfigurationReader(v, onlyPath)
 	}
 	asserter.Panics(fn)
 }

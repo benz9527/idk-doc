@@ -10,9 +10,13 @@ import (
 	"strings"
 
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
+	"github.com/benz9527/idk-doc/internal/pkg/ioc"
+
+	"github.com/spf13/cast"
+	"github.com/spf13/viper"
 )
 
-func NewConfigurationReader(fp string) intf.IConfigurationReader {
+func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationReader {
 
 	fp = strings.ReplaceAll(fp, "/", "\\")
 
@@ -23,7 +27,12 @@ func NewConfigurationReader(fp string) intf.IConfigurationReader {
 
 	var dir, filename, ext string
 	if strings.HasPrefix(fp, ".\\") {
-		dir, _ = filepath.Abs(dir) // Missing file dir parameter suffix.
+		wd, e := cast.ToStringE(viper.Get(ioc.APP_ROOT_WORKING_DIR))
+		if e != nil || wd == "" {
+			dir, _ = filepath.Abs(dir) // Missing file dir parameter suffix.
+		} else {
+			dir = wd
+		}
 	}
 
 	last := strings.LastIndex(fp, "\\")
@@ -38,9 +47,9 @@ func NewConfigurationReader(fp string) intf.IConfigurationReader {
 
 	switch strings.ToLower(ext) {
 	case "yaml", "yml":
-		return newYamlReader(dir, filename, ext)
+		return newYamlReader(viper, dir, filename, ext)
 	case "toml":
-		return newTomlReader(dir, filename, ext)
+		return newTomlReader(viper, dir, filename, ext)
 	default:
 		panic(fmt.Errorf("unknown and not support file extension [%s]", ext))
 	}

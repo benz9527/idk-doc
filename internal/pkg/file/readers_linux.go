@@ -10,9 +10,13 @@ import (
 	"strings"
 
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
+	"github.com/benz9527/idk-doc/internal/pkg/ioc"
+
+	"github.com/spf13/cast"
+	"github.com/spf13/viper"
 )
 
-func NewConfigurationReader(fp string) intf.IConfigurationReader {
+func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationReader {
 
 	_, err := os.Stat(fp)
 	if os.IsNotExist(err) {
@@ -26,7 +30,12 @@ func NewConfigurationReader(fp string) intf.IConfigurationReader {
 	var dir, filename, ext string
 	last := strings.LastIndex(fp, "/")
 	if strings.HasPrefix(fp, "./") {
-		dir, _ = filepath.Abs(dir)
+		wd, e := cast.ToStringE(viper.Get(ioc.APP_ROOT_WORKING_DIR))
+		if e != nil || wd == "" {
+			dir, _ = filepath.Abs(dir)
+		} else {
+			dir = wd
+		}
 		dir = dir + "/" + fp[2:last]
 	}
 

@@ -8,17 +8,18 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_tomlReader_read_from_toml(t *testing.T) {
 	asserter := assert.New(t)
-
+	v := viper.New()
 	path, err := filepath.Abs("./test")
 	asserter.Nil(err)
 	_, err = os.Stat(path + "\\reader.toml")
 	asserter.Nil(err)
-	reader := newTomlReader(path, "reader", "toml")
+	reader := newTomlReader(v, path, "reader", "toml")
 
 	a, err := reader.GetAny("reader")
 	t.Log(a)

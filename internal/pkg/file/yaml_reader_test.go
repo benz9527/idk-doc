@@ -59,12 +59,12 @@ reader:
 
 func Test_yamlReader_read_from_yaml(t *testing.T) {
 	asserter := assert.New(t)
-
+	v := viper.New()
 	path, err := filepath.Abs("./test")
 	asserter.Nil(err)
 	_, err = os.Stat(path + "\\reader.yaml")
 	asserter.Nil(err)
-	reader := newYamlReader(path, "reader", "yaml")
+	reader := newYamlReader(v, path, "reader", "yaml")
 
 	s, err := reader.GetSlice("reader.myslice")
 	asserter.Nil(err)

@@ -6,15 +6,16 @@ package file
 import (
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_read_an_exists_dir_without_filename_with_backslash(t *testing.T) {
 	asserter := assert.New(t)
-
+	v := viper.New()
 	onlyPath := ".\\test"
 	fn := func() {
-		NewConfigurationReader(onlyPath)
+		NewConfigurationReader(v, onlyPath)
 	}
 	asserter.Panics(fn)
 }
