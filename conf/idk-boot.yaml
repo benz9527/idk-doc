@@ -1,0 +1,9 @@
+db:
+  type: SQLite3
+# For SQLite3, the db name is the .db file path also.
+  name: ./db/idk.db
+  additional:
+    user: ""
+    password: ""
+    address: ""
+    port: ""

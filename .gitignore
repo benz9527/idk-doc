@@ -90,3 +90,5 @@ fabric.properties
 # Dependency directories (remove the comment below to include it)
 vendor/
 
+# Exclude sqlite3 database file.
+./db/*.db
