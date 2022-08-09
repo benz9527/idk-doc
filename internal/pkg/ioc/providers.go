@@ -7,6 +7,11 @@ import (
 	"os"
 	"sync"
 
+	"github.com/benz9527/idk-doc/internal/pkg/consts"
+	"github.com/benz9527/idk-doc/internal/pkg/db"
+	"github.com/benz9527/idk-doc/internal/pkg/file"
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
+
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
@@ -16,27 +21,29 @@ var (
 	once    = sync.Once{}
 )
 
-const (
-	APP_ROOT_WORKING_DIR = "APP_ROOT_WORKING_DIR"
-	EMPTY_DIR            = ""
-)
-
-func init() {
+func Init(filepath string) {
 	once.Do(func() {
+		// Without any another dependencies. Just a simple constructor.
 		// Viper dep
 		Options = append(Options, fx.Provide(func() *viper.Viper {
 			// Make viper as idk-doc application global const variable storage.
 			v := viper.New()
 			if wd, err := os.Getwd(); err == nil {
 				// At main entrypoint, it will be got the real root working directory of applicaiton.
-				v.Set(APP_ROOT_WORKING_DIR, wd)
+				v.Set(consts.APP_ROOT_WORKING_DIR, wd)
 			} else {
 				// Set as empty works for unit tests.
-				v.Set(APP_ROOT_WORKING_DIR, EMPTY_DIR)
+				v.Set(consts.APP_ROOT_WORKING_DIR, consts.EMPTY_DIR)
 			}
 			return v
 		}))
-		// TODO(Ben) Gorm SQLite3 dep
-		//Options = append(Options, fx.Provide(db.NewSQLite3DBClient))
+		Options = append(Options, fx.Provide(func(viper *viper.Viper) intf.IConfigurationReader {
+			return file.NewConfigurationReader(viper, filepath)
+		}))
+
+		// Contains dependencies reference. Uses invoke function to finish construction and DI.
+		// TODO(Ben) Gorm dep
+		Options = append(Options, fx.Provide(db.NewDatabaseClient))
 	})
+
 }

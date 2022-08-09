@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/benz9527/idk-doc/internal/pkg/consts"
+
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +29,7 @@ func Test_viper_provide_with_RWD_as_global(t *testing.T) {
 	Options = append(Options, fx.Invoke(func(v *viper.Viper, lifecycle fx.Lifecycle) {
 		lifecycle.Append(fx.Hook{
 			OnStart: func(ctx context.Context) error {
-				wd, err := cast.ToStringE(v.Get(APP_ROOT_WORKING_DIR))
+				wd, err := cast.ToStringE(v.Get(consts.APP_ROOT_WORKING_DIR))
 				asserter.Nil(err)
 				expectedWd, err := filepath.Abs(".")
 				asserter.Nil(err)
