@@ -91,4 +91,4 @@ fabric.properties
 vendor/
 
 # Exclude sqlite3 database file.
-./db/*.db
+db/*.db
