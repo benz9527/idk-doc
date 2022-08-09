@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
+	"github.com/benz9527/idk-doc/internal/pkg/consts"
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
-	"github.com/benz9527/idk-doc/internal/pkg/ioc"
 
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
@@ -19,30 +20,34 @@ import (
 func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationReader {
 
 	fp = strings.ReplaceAll(fp, "/", "\\")
-
-	_, err := os.Stat(fp)
-	if os.IsNotExist(err) {
-		panic(err)
-	}
+	last := strings.LastIndex(fp, "\\")
 
 	var dir, filename, ext string
-	if strings.HasPrefix(fp, ".\\") {
-		wd, e := cast.ToStringE(viper.Get(ioc.APP_ROOT_WORKING_DIR))
-		if e != nil || wd == "" {
-			dir, _ = filepath.Abs(dir) // Missing file dir parameter suffix.
-		} else {
-			dir = wd
+	dir = fp[:last]
+	filenameWithExt := fp[last+1:] // Separating the filename with file type extension at first.
+	if !strings.Contains(filenameWithExt, ".") {
+		panic(fmt.Errorf("unable to parse file path [%s] with uncompleted info", fp))
+	}
+	res := strings.Split(filenameWithExt, ".")
+	filename, ext = res[0], res[1]
+
+	if matched, e := regexp.MatchString(`^[A-Za-z]:\\`, dir); !matched && e != nil {
+		panic(e)
+	} else {
+		if strings.HasPrefix(dir, ".\\") {
+			wd, e := cast.ToStringE(viper.Get(consts.APP_ROOT_WORKING_DIR))
+			if e != nil || wd == "" {
+				dir, _ = filepath.Abs(dir) // Missing file dir parameter suffix.
+			} else {
+				dir = wd
+			}
 		}
 	}
 
-	last := strings.LastIndex(fp, "\\")
-	dir, filename = dir+"\\"+fp[2:last], fp[last+1:]
-	if strings.Contains(filename, ".") {
-		res := strings.Split(filename, ".")
-		filename = res[0]
-		ext = res[1]
-	} else {
-		panic(fmt.Errorf("unable to parse file path [%s] with uncompleted info", fp))
+	finalPath := dir + "\\" + filenameWithExt
+	_, err := os.Stat(finalPath)
+	if os.IsNotExist(err) {
+		panic(err)
 	}
 
 	switch strings.ToLower(ext) {

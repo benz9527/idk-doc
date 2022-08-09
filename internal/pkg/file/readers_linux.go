@@ -5,23 +5,13 @@ package file
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
-	"github.com/benz9527/idk-doc/internal/pkg/ioc"
-
-	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 )
 
 func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationReader {
-
-	_, err := os.Stat(fp)
-	if os.IsNotExist(err) {
-		panic(err)
-	}
 
 	if strings.Contains(fp, "\\") {
 		panic(fmt.Errorf("unknown backslash for config file path [%s] in linux", fp))
@@ -29,8 +19,17 @@ func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationRe
 
 	var dir, filename, ext string
 	last := strings.LastIndex(fp, "/")
-	if strings.HasPrefix(fp, "./") {
-		wd, e := cast.ToStringE(viper.Get(ioc.APP_ROOT_WORKING_DIR))
+	filenameWithExt := fp[last+1:]
+	if !strings.Contains(filename, ".") { // Verify with file type extension.
+		panic(fmt.Errorf("unable to parse file dir [%s] with uncompleted info", fp))
+	}
+	res := strings.Split(filename, ".")
+	filename, ext = res[0], res[1]
+
+	if !strings.HasPrefix(fp, "./") { // Start with "/"
+		dir = fp[:last]
+	} else { // Start with "./"
+		wd, e := cast.ToStringE(viper.Get(consts.APP_ROOT_WORKING_DIR))
 		if e != nil || wd == "" {
 			dir, _ = filepath.Abs(dir)
 		} else {
@@ -39,13 +38,10 @@ func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationRe
 		dir = dir + "/" + fp[2:last]
 	}
 
-	filename = fp[last+1:]
-	if strings.Contains(filename, ".") {
-		res := strings.Split(filename, ".")
-		filename = res[0]
-		ext = res[1]
-	} else {
-		panic(fmt.Errorf("unable to parse file dir [%s] with uncompleted info", fp))
+	finalPath := dir + "/" + filenameWithExt
+	_, err := os.Stat(finalPath)
+	if os.IsNotExist(err) {
+		panic(err)
 	}
 
 	switch strings.ToLower(ext) {
