@@ -6,22 +6,31 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
+	"github.com/benz9527/idk-doc/internal/app/cli"
 	"github.com/benz9527/idk-doc/internal/pkg/ioc"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
 
 func main() {
+	IDK(os.Args[1:])
+}
 
-	// TODO(Ben) Should add boot command line part.
+func IDK(args []string) {
+	opts := cli.NewBootOptions()
+	if err := opts.Parse(args); err != nil {
+		// Application exit with error.
+		os.Exit(1)
+	}
 
 	ioc.Options = append(ioc.Options, fx.Provide(func() *fiber.App {
 		return fiber.New()
 	}))
 
-	ioc.Options = append(ioc.Options, fx.Invoke(func(srv *fiber.App, v *viper.Viper, lifecycle fx.Lifecycle) {
+	ioc.Options = append(ioc.Options, fx.Invoke(func(srv *fiber.App, lifecycle fx.Lifecycle) {
 		lifecycle.Append(fx.Hook{
 			OnStart: func(ctx context.Context) error {
 				go func() {
@@ -36,6 +45,8 @@ func main() {
 			},
 		})
 	}))
+
+	ioc.Init(opts.FilePath)
 
 	app := fx.New(
 		ioc.Options...,
