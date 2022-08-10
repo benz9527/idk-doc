@@ -1,3 +1,6 @@
+app:
+  env: dev
+
 db:
   type: SQLite3
 # For SQLite3, the db name is the .db file path also.

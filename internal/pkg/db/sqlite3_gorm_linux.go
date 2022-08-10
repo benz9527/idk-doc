@@ -30,7 +30,7 @@ func newSQLite3DBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer
 	}
 
 	var completedDbPath string
-	if match, err := regexp.MatchString(`^([\.\.]/?)+`, dbPath); match && err == nil {
+	if match, err := regexp.MatchString(`^(\.\./?)+`, dbPath); match && err == nil {
 		panic(fmt.Errorf("not support multiple upper dir relative path [%s]", dbPath))
 	}
 
@@ -109,23 +109,25 @@ func (s *sqlite3) ShouldCreateDB(condition string, notPresent bool) (consts.DBIn
 	return consts.RECREATED, nil
 }
 
+// InitSchema
+// SQLite3 root schema sqlite_master will be created automatically.
+// CREATE TABLE sqlite_master
+// (
+//
+//	type TEXT,
+//	name TEXT,
+//	tbl_name TEXT,
+//	rootpage INT,
+//	sql TEXT,
+//
+// )
+// This is function prepared for migration schema initialize for
+// the database first creation for recreation.
 func (s *sqlite3) InitSchema(status consts.DBInitStatus) error {
 	if status != consts.RECREATED {
 		return nil
 	}
 
 	tx := s.GetDBClient().Begin()
-	if err := tx.Exec(`CREATE TABLE sqlite_master
-(
-    type TEXT,
-    name TEXT,
-    tbl_name TEXT,
-    rootpage INT,
-    sql TEXT,
-)
-`).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
 	return tx.Commit().Error
 }

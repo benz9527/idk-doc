@@ -19,6 +19,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const UPPER_RELATIVE_DIR = "../../"
+
 func Test_viper_provide_with_RWD_as_global(t *testing.T) {
 	asserter := assert.New(t)
 
@@ -44,7 +46,7 @@ func Test_viper_provide_with_RWD_as_global(t *testing.T) {
 		})
 	}))
 
-	Init("../../../conf/idk-boot.yaml")
+	Init(UPPER_RELATIVE_DIR + "conf/idk-boot.yaml")
 
 	app := fx.New(
 		Options...,
@@ -77,7 +79,7 @@ func Test_readers_read_from_upper_relative_dir(t *testing.T) {
 		})
 	}))
 
-	Init("../../../conf/idk-boot.yaml")
+	Init(UPPER_RELATIVE_DIR + "conf/idk-boot.yaml")
 
 	app := fx.New(
 		Options...,
@@ -122,7 +124,7 @@ func Test_gorm_run_with_sqlite3_init(t *testing.T) {
 		})
 	}))
 
-	Init("../../../conf/idk-boot.yaml")
+	Init(UPPER_RELATIVE_DIR + "conf/idk-boot.yaml")
 
 	app := fx.New(
 		Options...,

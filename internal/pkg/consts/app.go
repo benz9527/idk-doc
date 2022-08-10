@@ -22,3 +22,9 @@ const (
 	RECREATE_WITH_ERR
 	ONLY_REMOVED
 )
+
+const (
+	APP_RUNTIME_ENV_DEV  = "dev"
+	APP_RUNTIME_ENV_PROD = "prod"
+	APP_DEFAULT_DB_PATH  = "./db/idk.db"
+)
