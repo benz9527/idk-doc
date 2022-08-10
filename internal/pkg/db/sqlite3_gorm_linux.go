@@ -23,30 +23,29 @@ type sqlite3 struct {
 }
 
 func newSQLite3DBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer {
-	dbPath, err := cfgReader.GetString("db.name")
-	if err != nil {
+
+	var (
+		rwd, dbPath, execEnv string
+		completedDBPath      string
+		err                  error
+		initializer          = &sqlite3{}
+	)
+
+	if dbPath, err = cfgReader.GetString("db.name"); err != nil {
 		// TODO(Ben) Need more details.
 		panic(err)
 	}
 
-	var completedDbPath string
-	if match, err := regexp.MatchString(`^(\.\./?)+`, dbPath); match && err == nil {
-		panic(fmt.Errorf("not support multiple upper dir relative path [%s]", dbPath))
+	if execEnv, err = cfgReader.GetString("app.env"); err != nil || len(execEnv) == 0 {
+		execEnv = consts.APP_RUNTIME_ENV_DEV
 	}
 
-	if strings.HasPrefix(dbPath, "./") {
-		rwd, err := cfgReader.GetString(consts.APP_ROOT_WORKING_DIR)
-		if err != nil {
-			panic(err)
-		}
-		completedDbPath = rwd + dbPath[2:] // Remove the "./"
-	} else {
-		completedDbPath = dbPath
+	if rwd, err = cfgReader.GetString(consts.APP_ROOT_WORKING_DIR); err != nil && execEnv == consts.APP_RUNTIME_ENV_PROD {
+		panic(err)
 	}
 
-	initializer := &sqlite3{}
-
-	_, err = os.Stat(completedDbPath)
+	completedDBPath, dbPath = getDBPathByEnv(execEnv, dbPath, rwd)
+	_, err = os.Stat(completedDBPath)
 	initializer.dbPath = dbPath
 	cond, _ := cfgReader.GetString("db.init.create_db")
 	status, err := initializer.ShouldCreateDB(cond, os.IsNotExist(err))
@@ -56,7 +55,7 @@ func newSQLite3DBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer
 
 	dbClient, err := gorm.Open(sqlite.Dialector{
 		DriverName: sqlite.DriverName,
-		DSN:        completedDbPath,
+		DSN:        completedDBPath,
 	})
 	if err != nil {
 		panic(err)
@@ -130,4 +129,30 @@ func (s *sqlite3) InitSchema(status consts.DBInitStatus) error {
 
 	tx := s.GetDBClient().Begin()
 	return tx.Commit().Error
+}
+
+func getDBPathByEnv(env, dbPathFromYaml, rwd string) (completedDBPath string, convertedDBPath string) {
+	if env == consts.APP_RUNTIME_ENV_DEV && !filepath.IsAbs(dbPathFromYaml) {
+		if abs, err := filepath.Abs("."); err != nil {
+			panic(fmt.Errorf("unable to create env [%s] db path for test, error: %v", env, err))
+		} else {
+			convertedDBPath = abs + "/idk_test.db"
+			completedDBPath = convertedDBPath
+		}
+		return
+	}
+
+	// "dev" with abs db path or "prod" handles parts.
+
+	if match, err := regexp.MatchString(`^(\.\./?)+`, convertedDBPath); match && err == nil {
+		panic(fmt.Errorf("not support multiple upper dir relative path [%s]", convertedDBPath))
+	}
+
+	if strings.HasPrefix(convertedDBPath, "./") {
+		completedDBPath = rwd + convertedDBPath[2:] // Remove the "./"
+	} else {
+		completedDBPath = convertedDBPath
+	}
+
+	return completedDBPath, convertedDBPath
 }

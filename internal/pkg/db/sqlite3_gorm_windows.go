@@ -27,6 +27,7 @@ func newSQLite3DBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer
 		rwd, dbPath, execEnv string
 		completedDBPath      string
 		err                  error
+		initializer          = &sqlite3{}
 	)
 
 	if dbPath, err = cfgReader.GetString("db.name"); err != nil {
@@ -43,9 +44,6 @@ func newSQLite3DBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer
 	}
 
 	completedDBPath, dbPath = getDBPathByEnv(execEnv, dbPath, rwd)
-
-	initializer := &sqlite3{}
-
 	_, err = os.Stat(completedDBPath)
 	initializer.dbPath = dbPath
 	cond, _ := cfgReader.GetString("db.init.create_db")
