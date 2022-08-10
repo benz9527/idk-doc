@@ -6,11 +6,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/benz9527/idk-doc/internal/ioc"
 	"os"
 
 	"github.com/benz9527/idk-doc/internal/app/cli"
-	"github.com/benz9527/idk-doc/internal/pkg/ioc"
-
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 )
