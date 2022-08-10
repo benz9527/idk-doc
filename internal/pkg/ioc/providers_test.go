@@ -16,6 +16,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/fx"
+	"gorm.io/gorm"
 )
 
 func Test_viper_provide_with_RWD_as_global(t *testing.T) {
@@ -68,6 +69,51 @@ func Test_readers_read_from_upper_relative_dir(t *testing.T) {
 				typ, err := cfgReader.GetString("db.type")
 				asserter.Nil(err)
 				asserter.Equal("SQLite3", typ)
+				return nil
+			},
+			OnStop: func(ctx context.Context) error {
+				return nil
+			},
+		})
+	}))
+
+	Init("../../../conf/idk-boot.yaml")
+
+	app := fx.New(
+		Options...,
+	)
+
+	app.Run()
+}
+
+func Test_gorm_run_with_sqlite3_init(t *testing.T) {
+	asserter := assert.New(t)
+
+	// Auto shutdown
+	Options = append(Options, fx.Invoke(func(shutdowner fx.Shutdowner) {
+		time.Sleep(3 * time.Second)
+		_ = shutdowner.Shutdown()
+	}))
+
+	Options = append(Options, fx.Invoke(func(dbClient *gorm.DB, lifecycle fx.Lifecycle) {
+		lifecycle.Append(fx.Hook{
+			OnStart: func(ctx context.Context) error {
+				asserter.NotNil(dbClient)
+				var expected int
+				tx := dbClient.Begin()
+				err := tx.Exec(`CREATE TABLE IF NOT EXISTS tbl_test (num INT)`).Error
+				if err != nil {
+					tx.Rollback()
+					expected = 0
+				} else {
+					asserter.Nil(tx.Commit().Error)
+					expected = 1
+				}
+				var count int
+				dbClient.Raw(`SELECT count(1) FROM sqlite_master WHERE type IN('table')`).
+					Scan(&count)
+				t.Log(count)
+				asserter.Equal(expected, count)
 				return nil
 			},
 			OnStop: func(ctx context.Context) error {

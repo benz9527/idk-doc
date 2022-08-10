@@ -1,9 +1,18 @@
 db:
   type: SQLite3
 # For SQLite3, the db name is the .db file path also.
-  name: ./db/idk.db
+# Default SQLite3 database will be located at idk application
+# relative sub-dir named db and 'db' name is 'idk.db'.
+# Generally, it has better to fill with absolute path.
+  name: "./db/idk.db"
+  init:
+# Only 3 values could be selected: IfNotPresent, Always or Never
+    create_db: IfNotPresent
   additional:
     user: ""
     password: ""
     address: ""
     port: ""
+    max_idle_conns: 10
+    max_open_conns: 64
+    max_live_time_per_conn: 60

@@ -5,10 +5,8 @@ package db
 
 import (
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
-	"gorm.io/gorm"
 )
 
-func newMySQLDBClient(cfgReader intf.IConfigurationReader) *gorm.DB {
+func newMySQLDBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer {
 	panic("implement in future")
 }

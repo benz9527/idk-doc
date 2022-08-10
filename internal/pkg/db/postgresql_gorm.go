@@ -5,9 +5,8 @@ package db
 
 import (
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
-	"gorm.io/gorm"
 )
 
-func newPostgreSQLDBClient(cfgReader intf.IConfigurationReader) *gorm.DB {
+func newPostgreSQLDBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer {
 	panic("implement in future")
 }
