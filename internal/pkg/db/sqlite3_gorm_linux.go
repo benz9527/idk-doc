@@ -133,12 +133,8 @@ func (s *sqlite3) InitSchema(status consts.DBInitStatus) error {
 
 func getDBPathByEnv(env, dbPathFromYaml, rwd string) (completedDBPath string, convertedDBPath string) {
 	if env == consts.APP_RUNTIME_ENV_DEV && !filepath.IsAbs(dbPathFromYaml) {
-		if abs, err := filepath.Abs("."); err != nil {
-			panic(fmt.Errorf("unable to create env [%s] db path for test, error: %v", env, err))
-		} else {
-			convertedDBPath = abs + "/idk_test.db"
-			completedDBPath = convertedDBPath
-		}
+		convertedDBPath = filepath.Join(os.TempDir(), "idk_test.db")
+		completedDBPath = convertedDBPath
 		return
 	}
 
