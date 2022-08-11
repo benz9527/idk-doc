@@ -28,3 +28,12 @@ const (
 	APP_RUNTIME_ENV_PROD = "prod"
 	APP_DEFAULT_DB_PATH  = "./db/idk.db"
 )
+
+const (
+	APP_LOG_ENC_JSON  = "JSON"
+	APP_LOG_ENC_PLAIN = "PlainText"
+	APP_LOG_LVL_DEBUG = "DEBUG"
+	APP_LOG_LVL_INFO  = "INFO" // Product env default level if not present in configuration.
+	APP_LOG_LVL_WARN  = "WARN"
+	APP_LOG_LVL_ERR   = "ERROR"
+)

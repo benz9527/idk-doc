@@ -19,3 +19,15 @@ db:
     max_idle_conns: 10
     max_open_conns: 64
     max_live_time_per_conn: 60
+
+log:
+  style: JSON
+  level: DEBUG
+  file:
+    enable: true
+    common_out_path: ""
+    err_out_path: ""
+    max_mb_size: 10
+    max_backups: 7
+    max_days: 16
+    compress: true

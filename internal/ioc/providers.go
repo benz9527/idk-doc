@@ -4,6 +4,7 @@
 package ioc
 
 import (
+	"github.com/benz9527/idk-doc/internal/pkg/logger"
 	"os"
 	"sync"
 
@@ -29,7 +30,7 @@ func Init(filepath string) {
 			// Make viper as idk-doc application global const variable storage.
 			v := viper.New()
 			if wd, err := os.Getwd(); err == nil {
-				// At main entrypoint, it will be got the real root working directory of applicaiton.
+				// At main entrypoint, it will be got the real root working directory of application.
 				v.Set(consts.APP_ROOT_WORKING_DIR, wd)
 			} else {
 				// Set as empty works for unit tests.
@@ -37,12 +38,12 @@ func Init(filepath string) {
 			}
 			return v
 		}))
+
+		// Contains dependencies reference. Uses invoke function to finish construction and DI.
 		Options = append(Options, fx.Provide(func(viper *viper.Viper) intf.IConfigurationReader {
 			return file.NewConfigurationReader(viper, filepath)
 		}))
-
-		// Contains dependencies reference. Uses invoke function to finish construction and DI.
-		// TODO(Ben) Gorm dep
+		Options = append(Options, fx.Provide(logger.NewLogger))
 		Options = append(Options, fx.Provide(db.NewDatabaseClient))
 	})
 
