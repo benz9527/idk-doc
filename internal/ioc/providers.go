@@ -4,17 +4,18 @@
 package ioc
 
 import (
-	"github.com/benz9527/idk-doc/internal/pkg/logger"
 	"os"
 	"sync"
+
+	"github.com/spf13/viper"
+	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
 
 	"github.com/benz9527/idk-doc/internal/pkg/consts"
 	"github.com/benz9527/idk-doc/internal/pkg/db"
 	"github.com/benz9527/idk-doc/internal/pkg/file"
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
-	"github.com/spf13/viper"
-	"go.uber.org/fx"
+	"github.com/benz9527/idk-doc/internal/pkg/logger"
 )
 
 var (
@@ -45,6 +46,21 @@ func Init(filepath string) {
 		}))
 		Options = append(Options, fx.Provide(logger.NewLogger))
 		Options = append(Options, fx.Provide(db.NewDatabaseClient))
+
+		// Fx logger.
+		Options = append(Options, fx.WithLogger(func(cfgReader intf.IConfigurationReader) fxevent.Logger {
+			env, err := cfgReader.GetString("app.env")
+			if err != nil || len(env) == 0 {
+				env = consts.APP_RUNTIME_ENV_DEV
+			}
+
+			if env == consts.APP_RUNTIME_ENV_PROD {
+				return fxevent.NopLogger
+			}
+			return &fxevent.ConsoleLogger{
+				W: os.Stdout,
+			}
+		}))
 	})
 
 }

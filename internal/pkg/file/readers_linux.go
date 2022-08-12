@@ -5,11 +5,12 @@ package file
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
-	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
 	"github.com/spf13/viper"
+
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
 func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationReader {
@@ -31,14 +32,12 @@ func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationRe
 	if strings.HasPrefix(dir, "./") { // Start with "./"
 		wd, e := cast.ToStringE(viper.Get(consts.APP_ROOT_WORKING_DIR))
 		if e != nil || wd == "" {
-			dir, _ = filepath.Abs(".")
-		} else {
-			dir = wd
+			wd, _ = filepath.Abs(".")
 		}
-		dir = dir + "/" + dir[2:]
+		dir = filepath.Join(wd, dir[2:])
 	} else if strings.HasPrefix(dir, "../") { // Start with "../"
 		var err error
-		if _, err = regexp.MatchString(`^[\.\./]+`, dir); err != nil {
+		if _, err = regexp.MatchString(`^(\.\./)+`, dir); err != nil {
 			panic(err)
 		}
 		upperLen := strings.LastIndex(dir, "../") + 3
@@ -46,20 +45,20 @@ func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationRe
 		if upperDir, err = filepath.Abs(upperDir); err != nil {
 			panic(err)
 		}
-		dir = upperDir + "/" + dir[upperLen:last]
+		dir = filepath.Join(upperDir, dir[upperLen:last])
 	}
 
-	finalPath := dir + "/" + filenameWithExt
+	finalPath := filepath.Join(dir, filenameWithExt)
 	_, err := os.Stat(finalPath)
 	if os.IsNotExist(err) {
 		panic(err)
 	}
 
 	switch strings.ToLower(ext) {
-	case "yaml", "yml":
-		return newYamlReader(dir, filename, ext)
 	case "toml":
 		return newTomlReader(dir, filename, ext)
+	case "yaml", "yml":
+		return newYamlReader(dir, filename, ext)
 	default:
 		panic(fmt.Errorf("unknown and not support file extension [%s]", ext))
 	}
