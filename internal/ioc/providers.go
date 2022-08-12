@@ -3,13 +3,19 @@
 
 package ioc
 
+// Doc https://pkg.go.dev/go.uber.org/fx
+
 import (
+	"context"
+	"fmt"
 	"os"
 	"sync"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
+	"go.uber.org/zap"
 
 	"github.com/benz9527/idk-doc/internal/pkg/consts"
 	"github.com/benz9527/idk-doc/internal/pkg/db"
@@ -25,7 +31,13 @@ var (
 
 func Init(filepath string) {
 	once.Do(func() {
-		// Without any another dependencies. Just a simple constructor.
+		// 1. Without any another dependencies. Just a simple constructor.
+		Options = append(Options, fx.Provide(
+			fx.Annotate(banner, fx.ResultTags(`name:"banner"`)),
+		))
+		Options = append(Options, fx.Provide(func() *fiber.App {
+			return fiber.New()
+		}))
 		// Viper dep
 		Options = append(Options, fx.Provide(func() *viper.Viper {
 			// Make viper as idk-doc application global const variable storage.
@@ -40,13 +52,11 @@ func Init(filepath string) {
 			return v
 		}))
 
-		// Contains dependencies reference. Uses invoke function to finish construction and DI.
+		// 2. Contains dependencies reference. Uses invoke function to finish construction and DI.
 		Options = append(Options, fx.Provide(func(viper *viper.Viper) intf.IConfigurationReader {
 			return file.NewConfigurationReader(viper, filepath)
 		}))
 		Options = append(Options, fx.Provide(logger.NewLogger))
-		Options = append(Options, fx.Provide(db.NewDatabaseClient))
-
 		// Fx logger.
 		Options = append(Options, fx.WithLogger(func(cfgReader intf.IConfigurationReader) fxevent.Logger {
 			env, err := cfgReader.GetString("app.env")
@@ -61,6 +71,46 @@ func Init(filepath string) {
 				W: os.Stdout,
 			}
 		}))
+		// Database.
+		Options = append(Options, fx.Provide(db.NewDatabaseClient))
+
+		// 3. Invocations.
+		// Application
+		Options = append(Options, fx.Invoke(func(deps struct {
+			fx.In
+			// Fields must be exported.
+			Srv    *fiber.App
+			Lc     fx.Lifecycle
+			Logger *zap.SugaredLogger
+			Banner string `name:"banner"`
+		}) {
+			deps.Lc.Append(fx.Hook{
+				OnStart: func(ctx context.Context) error {
+					go func() {
+						fmt.Print(deps.Banner)
+						if err := deps.Srv.Listen(":8166"); err != nil {
+							_ = fmt.Errorf("failed to listen and serve from server: %v", err)
+						}
+					}()
+					return nil
+				},
+				OnStop: func(ctx context.Context) error {
+					return deps.Srv.Shutdown()
+				},
+			})
+		}))
 	})
 
+}
+
+// https://www.bootschool.net/ascii (ansi-shadow)
+func banner() string {
+	return `
+██╗██████╗ ██╗  ██╗     ██████╗  ██████╗  ██████╗
+██║██╔══██╗██║ ██╔╝     ██╔══██╗██╔═══██╗██╔════╝
+██║██║  ██║█████╔╝█████╗██║  ██║██║   ██║██║     
+██║██║  ██║██╔═██╗╚════╝██║  ██║██║   ██║██║     
+██║██████╔╝██║  ██╗     ██████╔╝╚██████╔╝╚██████╗
+╚═╝╚═════╝ ╚═╝  ╚═╝     ╚═════╝  ╚═════╝  ╚═════╝
+`
 }
