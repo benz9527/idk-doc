@@ -31,3 +31,14 @@ log:
     max_backups: 7
     max_days: 16
     compress: true
+
+oss:
+  type: minio
+# Default localhost:9000.
+  endpoint: "localhost:9000"
+  security:
+    enabled: false
+# Like username.
+    access_key_id: ""
+# Like password.
+    secret_access_key: ""
