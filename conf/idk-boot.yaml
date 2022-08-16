@@ -42,3 +42,15 @@ oss:
     access_key_id: ""
 # Like password.
     secret_access_key: ""
+
+redis:
+# Client mode: single, cluster, failover(ms)
+  mode: single
+# Example: host:port
+  addresses:
+    - "localhost:6379"
+  auth:
+    name: ""
+    secret: ""
+  additional:
+    master_name: "idk-master"

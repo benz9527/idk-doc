@@ -17,6 +17,7 @@ import (
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 
+	"github.com/benz9527/idk-doc/internal/pkg/cache"
 	"github.com/benz9527/idk-doc/internal/pkg/consts"
 	"github.com/benz9527/idk-doc/internal/pkg/db"
 	"github.com/benz9527/idk-doc/internal/pkg/file"
@@ -73,6 +74,7 @@ func Init(filepath string) {
 		}))
 		// Database.
 		Options = append(Options, fx.Provide(db.NewDatabaseClient))
+		Options = append(Options, fx.Provide(cache.NewRedisClient))
 
 		// 3. Invocations.
 		// Application
