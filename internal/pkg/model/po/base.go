@@ -8,14 +8,14 @@ import (
 )
 
 type BaseMetaNumericId struct {
-	Id uint `gorm:"column:id;primary;autoIncrement;<-:create;"`
+	Id uint `gorm:"column:id;primaryKey;autoIncrement;<-:create;"`
 }
 
 // BaseMetaStringId
 // IDK-Doc uses the nano-id, so it can be set the len as fixed size 21.
 // https://github.com/jaevor/go-nanoid
 type BaseMetaStringId struct {
-	Id string `gorm:"column:id;primary;size:21;<-:create;"`
+	Id string `gorm:"column:id;primaryKey;type:varchar(21);<-:create;"`
 }
 
 type BaseMetaCreatedAt struct {

@@ -3,11 +3,13 @@
 
 package po
 
+// https://www.sqlite.org/datatype3.html
+
 type Workspace struct {
 	NanoIdFullMode
-	Name  string `gorm:"column:name;size:32;<-"`   // Used for request URL as by primary key.
-	Icon  string `gorm:"column:icon;<-"`           // ICON URL, displayed with fixed size.
-	Intro string `gorm:"column:intro;size:512;<-"` // Describes the workspace works for sth.
+	Name  string `gorm:"column:name;uniqueIndex:idx_ws_name;type:varchar(32);<-"` // Used for request URL as by primary key.
+	Icon  string `gorm:"column:icon;type:varchar(512);<-"`                        // ICON URL, displayed with fixed size in WebUI.
+	Intro string `gorm:"column:intro;type:varchar(512);<-"`                       // Describes the workspace works for sth.
 }
 
 // TableName
