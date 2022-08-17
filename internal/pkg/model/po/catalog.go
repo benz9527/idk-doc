@@ -7,8 +7,8 @@ package po
 // Makes the persistence object keep simple without belongs to or others reference schemas.
 type CatalogCore struct {
 	NanoIdFullMode
-	WorkspaceId     string `gorm:"column:ws_id;type:char(21);index;<-;"`
-	GoBackCatalogId string `gorm:"column:go_back_id;type:char(21);<-;"`
+	WorkspaceId     string `gorm:"column:ws_id;type:varchar(21);index;<-;"`
+	GoBackCatalogId string `gorm:"column:go_back_id;type:varchar(21);<-;"`
 	Name            string `gorm:"column:name;type:nvarchar(32);uniqueIndex:idk_catalog_name;<-;"`
 }
 
