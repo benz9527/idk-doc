@@ -18,8 +18,8 @@ func (c CatalogCore) IsPoCore() bool {
 
 type Catalog[T CatalogCore] struct {
 	Core      T          `gorm:"embedded;"`
-	Workspace *Workspace `gorm:"foreignKey:WorkspaceId;-:all;"`
-	Catalog   *T         `gorm:"foreignKey:GoBackCatalogId;-:all;"`
+	Workspace *Workspace `gorm:"foreignKey:WorkspaceId;"`
+	Catalog   *T         `gorm:"foreignKey:GoBackCatalogId;"`
 }
 
 func (c Catalog[T]) TableName() string {
