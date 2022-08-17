@@ -7,9 +7,9 @@ package po
 
 type Workspace struct {
 	NanoIdFullMode
-	Name  string `gorm:"column:name;uniqueIndex:idx_ws_name;type:varchar(32);<-"` // Used for request URL as by primary key.
-	Icon  string `gorm:"column:icon;type:varchar(512);<-"`                        // ICON URL, displayed with fixed size in WebUI.
-	Intro string `gorm:"column:intro;type:varchar(512);<-"`                       // Describes the workspace works for sth.
+	Name  string `gorm:"column:name;uniqueIndex:idx_ws_name;type:nvarchar(32);<-"` // Used for request URL as by primary key.
+	Icon  string `gorm:"column:icon;type:varchar(512);<-"`                         // ICON URL, displayed with fixed size in WebUI.
+	Intro string `gorm:"column:intro;type:nvarchar(512);<-"`                       // Describes the workspace works for sth. Including Hanzi, so it has to elect unicode char.
 }
 
 // TableName

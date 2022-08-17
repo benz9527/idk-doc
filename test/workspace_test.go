@@ -5,9 +5,6 @@ package test
 
 import (
 	"context"
-	"os"
-	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,22 +27,12 @@ func Test_init_workspace_in_db(t *testing.T) {
 				err := dbClient.AutoMigrate(&po.Workspace{})
 				asserter.Nil(err)
 
-				abs, err := filepath.Abs(".")
-				asserter.Nil(err)
-				content, err := os.ReadFile(filepath.Join(abs, "sqls", "V1__dev_only_for_ws_init.sql"))
-				asserter.Nil(err)
-				tx := dbClient.Begin()
-				hasRollback := false
-				for _, sql := range strings.Split(string(content), ";") {
-					if err = tx.Exec(sql + ";").Error; err != nil {
-						tx.Rollback()
-						hasRollback = true
-						break
-					}
-				}
-				if !hasRollback {
-					asserter.Nil(tx.Commit().Error)
-				}
+				asserter.Nil(callSQLFiles(dbClient, "V1__dev_only_for_ws_init.sql"))
+
+				var count int64
+				expectedCount := int64(3)
+				dbClient.Model(&po.Workspace{}).Count(&count)
+				asserter.Equal(expectedCount, count)
 
 				return nil
 			},

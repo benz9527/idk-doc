@@ -6,6 +6,7 @@ package test
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -25,4 +26,37 @@ func genDevTestSQLiteDB() *gorm.DB {
 	v.Set("db.additional.max_live_time_per_conn", 60)
 	reader := file.NewSimpleReader(v)
 	return db.NewDatabaseClient(reader)
+}
+
+func callSQLFiles(dbClient *gorm.DB, files ...string) error {
+	abs, err := filepath.Abs(".")
+	if err != nil {
+		return err
+	}
+
+	if len(files) <= 0 {
+		return nil
+	}
+
+	for _, f := range files {
+		content, err := os.ReadFile(filepath.Join(abs, "sqls", f))
+		if err != nil {
+			return err
+		}
+		tx := dbClient.Begin()
+		hasRollback := false
+		for _, sql := range strings.Split(string(content), ";") {
+			if err = tx.Exec(sql + ";").Error; err != nil {
+				tx.Rollback()
+				hasRollback = true
+				break
+			}
+		}
+		if !hasRollback {
+			if err = tx.Commit().Error; err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
