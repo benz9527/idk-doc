@@ -3,6 +3,8 @@
 
 package intf
 
-type ICore[T any] interface {
+type ICore[T comparable] interface {
+	// GetCore
+	// Avoid to let caller access with useless fields, like foreign key definition field.
 	GetCore() T
 }

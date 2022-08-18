@@ -37,3 +37,12 @@ const (
 	APP_LOG_LVL_WARN  = "WARN"
 	APP_LOG_LVL_ERR   = "ERROR"
 )
+
+type FileType uint8
+
+const (
+	FILE_TYPE_MD FileType = iota
+	FILE_TYPE_CODE
+	FILE_TYPE_ISSUE
+	// TODO(Ben) DOC, EXCEL
+)
