@@ -5,9 +5,10 @@ package collections
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"unsafe"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_no_mem_allocate_string_to_bytes(t *testing.T) {

@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
+
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
 // Only support .yaml and .yml configuration file.

@@ -9,10 +9,10 @@ package logger
 import (
 	"os"
 
-	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
 const (

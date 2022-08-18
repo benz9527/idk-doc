@@ -10,12 +10,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/benz9527/idk-doc/internal/pkg/consts"
-	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/benz9527/idk-doc/internal/pkg/consts"
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
 type consoleOutConfig struct {

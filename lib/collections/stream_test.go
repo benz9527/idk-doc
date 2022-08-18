@@ -4,8 +4,9 @@
 package collections
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_sliceStream_for_string_and_distinct(t *testing.T) {

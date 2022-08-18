@@ -4,10 +4,11 @@
 package db
 
 import (
-	"github.com/stretchr/testify/assert"
 	"path/filepath"
 	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_multiple_upper_dir_validated_by_regx(t *testing.T) {

@@ -4,9 +4,9 @@
 package intf
 
 import (
-	"github.com/benz9527/idk-doc/internal/pkg/consts"
-
 	"gorm.io/gorm"
+
+	"github.com/benz9527/idk-doc/internal/pkg/consts"
 )
 
 type IDBInitializer interface {

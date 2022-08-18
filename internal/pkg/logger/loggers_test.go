@@ -7,10 +7,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/benz9527/idk-doc/internal/pkg/file"
-
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/benz9527/idk-doc/internal/pkg/file"
 )
 
 func Test_json_logger(t *testing.T) {

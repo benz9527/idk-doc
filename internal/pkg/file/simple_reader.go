@@ -6,10 +6,10 @@ package file
 // For idk internal tests.
 
 import (
-	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
+
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
 type simpleReader struct {

@@ -9,14 +9,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/benz9527/idk-doc/internal/pkg/consts"
-	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
+
+	"github.com/benz9527/idk-doc/internal/pkg/consts"
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
 const UPPER_RELATIVE_DIR = "../../"
