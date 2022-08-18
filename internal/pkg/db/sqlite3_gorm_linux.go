@@ -3,6 +3,15 @@
 
 package db
 
+// References:
+// https://github.com/glebarez/go-sqlite
+// https://github.com/glebarez/sqlite (for gorm)
+// https://www.sqlite.org/pragma.html#pragma_journal_mode
+// https://www.sqlite.org/pragma.html#pragma_busy_timeout
+// Using gorm official sqlite driver requires dev/prod env
+// installed with gcc(linux)/mingw(win), otherwise it will
+// run with error.
+
 import (
 	"fmt"
 	"os"
@@ -10,11 +19,11 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/glebarez/sqlite"
+	"gorm.io/gorm"
+
 	"github.com/benz9527/idk-doc/internal/pkg/consts"
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 type sqlite3 struct {
@@ -55,8 +64,8 @@ func newSQLite3DBClient(cfgReader intf.IConfigurationReader) intf.IDBInitializer
 
 	dbClient, err := gorm.Open(sqlite.Dialector{
 		DriverName: sqlite.DriverName,
-		DSN:        completedDBPath,
-	})
+		DSN:        completedDBPath + "?_pragma=foreign_keys(1)&_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)",
+	}, &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
