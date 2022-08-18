@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/benz9527/idk-doc/internal/pkg/intf"
-
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+
+	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
 const (
@@ -30,7 +31,7 @@ var (
 	}
 )
 
-func NewDatabaseClient(cfgReader intf.IConfigurationReader) *gorm.DB {
+func NewDatabaseClient(cfgReader intf.IConfigurationReader, logger logger.Interface) *gorm.DB {
 	dbType, err := cfgReader.GetString("db.type")
 	if err != nil {
 		panic(err)
@@ -41,16 +42,18 @@ func NewDatabaseClient(cfgReader intf.IConfigurationReader) *gorm.DB {
 		panic(fmt.Errorf("unknown and unsupported database type [%s]", dbType))
 	}
 
-	return postOpenDBClient(fn(cfgReader).GetDBClient(), cfgReader)
+	return postOpenDBClient(fn(cfgReader).GetDBClient(), cfgReader, logger)
 }
 
-func postOpenDBClient(client *gorm.DB, cfgReader intf.IConfigurationReader) *gorm.DB {
+func postOpenDBClient(client *gorm.DB, cfgReader intf.IConfigurationReader, logger logger.Interface) *gorm.DB {
 	// If query result is empty, we mask the gorm v2 will occur bug
 	// issue: https://github.com/go-gorm/gorm/issues/3789
 	_ = client.Callback().Query().Before("gorm:query").
 		Register("disable_raise_record_not_found", func(db *gorm.DB) {
 			db.Statement.RaiseErrorOnNotFound = false
 		})
+	// Replace default logger to show SQL info.
+	client.Logger = logger
 
 	db, err := client.DB()
 	if err != nil {

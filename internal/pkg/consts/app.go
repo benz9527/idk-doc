@@ -3,6 +3,8 @@
 
 package consts
 
+import "strings"
+
 const (
 	APP_ROOT_WORKING_DIR = "APP_ROOT_WORKING_DIR"
 	EMPTY_DIR            = ""
@@ -37,6 +39,19 @@ const (
 	APP_LOG_LVL_WARN  = "WARN"
 	APP_LOG_LVL_ERR   = "ERROR"
 )
+
+func LogLevelCorrectOrDefault(lvl string) string {
+	if len(lvl) == 0 {
+		return APP_LOG_LVL_DEBUG
+	}
+
+	switch strings.ToUpper(lvl) {
+	case APP_LOG_LVL_DEBUG, APP_LOG_LVL_INFO, APP_LOG_LVL_WARN, APP_LOG_LVL_ERR:
+		return lvl
+	default:
+	}
+	return APP_LOG_LVL_DEBUG
+}
 
 type FileType uint8
 

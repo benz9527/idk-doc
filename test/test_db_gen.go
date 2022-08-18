@@ -9,11 +9,13 @@ import (
 	"strings"
 
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 
 	"github.com/benz9527/idk-doc/internal/pkg/consts"
 	"github.com/benz9527/idk-doc/internal/pkg/db"
 	"github.com/benz9527/idk-doc/internal/pkg/file"
+	"github.com/benz9527/idk-doc/internal/pkg/logger"
 )
 
 func genDevTestSQLiteDB() *gorm.DB {
@@ -24,8 +26,15 @@ func genDevTestSQLiteDB() *gorm.DB {
 	v.Set("db.additional.max_idle_conns", 10)
 	v.Set("db.additional.max_open_conns", 32)
 	v.Set("db.additional.max_live_time_per_conn", 60)
+	v.Set("app.env", consts.APP_RUNTIME_ENV_DEV)
+	v.Set("log.level", consts.APP_LOG_LVL_DEBUG)
 	reader := file.NewSimpleReader(v)
-	return db.NewDatabaseClient(reader)
+
+	l, err := zap.NewDevelopment()
+	if err != nil {
+		panic(err)
+	}
+	return db.NewDatabaseClient(reader, logger.NewGormLogger(l.Sugar(), reader))
 }
 
 func callSQLFiles(dbClient *gorm.DB, files ...string) error {

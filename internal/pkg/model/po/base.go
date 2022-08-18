@@ -38,3 +38,10 @@ type NanoIdFullMode struct {
 	BaseMetaUpdatedAt
 	BaseMetaDeletedAt
 }
+
+type AutoIncIdFullMode struct {
+	BaseMetaNumericId
+	BaseMetaCreatedAt
+	BaseMetaUpdatedAt
+	BaseMetaDeletedAt
+}

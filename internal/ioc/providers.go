@@ -58,6 +58,7 @@ func Init(filepath string) {
 			return file.NewConfigurationReader(viper, filepath)
 		}))
 		Options = append(Options, fx.Provide(logger.NewLogger))
+		Options = append(Options, fx.Provide(logger.NewGormLogger))
 		// Fx logger.
 		Options = append(Options, fx.WithLogger(func(cfgReader intf.IConfigurationReader) fxevent.Logger {
 			env, err := cfgReader.GetString("app.env")
