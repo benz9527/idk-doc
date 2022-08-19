@@ -5,11 +5,15 @@ package file
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
+	"github.com/spf13/cast"
 	"github.com/spf13/viper"
 
+	"github.com/benz9527/idk-doc/internal/pkg/consts"
 	"github.com/benz9527/idk-doc/internal/pkg/intf"
 )
 
@@ -56,9 +60,9 @@ func NewConfigurationReader(viper *viper.Viper, fp string) intf.IConfigurationRe
 
 	switch strings.ToLower(ext) {
 	case "toml":
-		return newTomlReader(dir, filename, ext)
+		return newTomlReader(viper, dir, filename, ext)
 	case "yaml", "yml":
-		return newYamlReader(dir, filename, ext)
+		return newYamlReader(viper, dir, filename, ext)
 	default:
 		panic(fmt.Errorf("unknown and not support file extension [%s]", ext))
 	}
