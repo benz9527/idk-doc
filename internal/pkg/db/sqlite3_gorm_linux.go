@@ -148,6 +148,7 @@ func getDBPathByEnv(env, dbPathFromYaml, rwd string) (completedDBPath string, co
 	}
 
 	// "dev" with abs db path or "prod" handles parts.
+	convertedDBPath = strings.ReplaceAll(dbPathFromYaml, "\\", "/")
 
 	if match, err := regexp.MatchString(`^(\.\./?)+`, convertedDBPath); match && err == nil {
 		panic(fmt.Errorf("not support multiple upper dir relative path [%s]", convertedDBPath))
@@ -157,6 +158,11 @@ func getDBPathByEnv(env, dbPathFromYaml, rwd string) (completedDBPath string, co
 		completedDBPath = rwd + convertedDBPath[2:] // Remove the "./"
 	} else {
 		completedDBPath = convertedDBPath
+	}
+
+	// Only support the suffix extension named db.
+	if _, err := regexp.MatchString(`.*/.*\.db$`, completedDBPath); err != nil {
+		panic(fmt.Errorf("[%s] isn't a real path style format of linux, error %v", completedDBPath, err))
 	}
 
 	return completedDBPath, convertedDBPath

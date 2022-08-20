@@ -162,7 +162,8 @@ func getDBPathByEnv(env, dbPathFromYaml, rwd string) (completedDBPath string, co
 		completedDBPath = convertedDBPath
 	}
 
-	if _, err := regexp.MatchString(`^[A-Za-z]:\\`, completedDBPath); err != nil {
+	// Only support the suffix extension named db.
+	if _, err := regexp.MatchString(`^[A-Za-z]:\\.*\\.*\.db$`, completedDBPath); err != nil {
 		panic(fmt.Errorf("[%s] isn't a real path style format of windows, error %v", completedDBPath, err))
 	}
 
