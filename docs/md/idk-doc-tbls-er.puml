@@ -1,0 +1,380 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+' entity definitions
+
+entity "idk_workspaces" as ws {
+  * id: varchar(21) <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  * name: nvarchar(32) <<index>>
+  icon: varchar(512)
+  intro: nvarchar(512)
+}
+
+entity "idk_catalogs" as cl {
+  * id: varchar(21) <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  * ws_id: varchar(21) <<FK>>
+  go_back_id: varchar(21) <<Fake FK>>
+  name: nvarchar(32) <<unique index>>
+}
+
+entity "idk_subj_id_map" as subj {
+  * id: varchar(21) <<PK>>
+  created_at: bigint
+  --
+  * ws_id: varchar(21) <<FK>>
+  type: tinyint(8) <<mul-index-1>>
+  catalog_id: nvarchar(32) <<mul-index-1, FK>>
+}
+
+entity "idk_md_tmpl" as mdtmpl {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  name: nvarchar(32) <<unique index>>
+  content: text
+}
+
+entity "idk_md_render_tmpl" as rendertmpl {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  title: nvarchar(64) <<index>>
+  content: text
+}
+
+entity "idk_md_render_tmpl_map" as renref {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  --
+  * subj_id: varchar(21) <<unique mul-index-6, FK>>
+  * tmpl_id: int <<unique mul-index-6, FK>>
+}
+
+' Markdown only. Others, like doc, excel, should convert into md.
+entity "idk_mds" as md {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  **version**: char(13)
+  --
+  * subj_id: varchar(21) <<FK>>
+  title: nvarchar(32) <<unique index>>
+  content: text
+}
+
+entity "idk_code_lang" as lang {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  name: nvarchar(16) <<unique index>>
+}
+
+entity "idk_code_tabs" as tab {
+  * id: int <<PK>>
+  created_at: bigint
+  --
+  * subj_id: varchar(21) <<FK>>
+  * lang_type_id: int <<FK>>
+  name: nvarchar(32) <<unique index>>
+}
+
+entity "idk_codes" as code {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  **version**: char(13)
+  --
+  * subj_id: varchar(21) <<FK>>
+  * tab_id: int <<FK>>
+  content: text
+}
+
+entity "idk_issues" as issue {
+  * id: int <<PK>>
+  created_at: bigint
+  --
+  * subj_id: varchar(21) <<FK, unique index>>
+  title: nvarchar(32)
+}
+
+entity "idk_issue_contents" as issue_ct {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  **version**: char(13)
+  --
+  * subj_id: varchar(21) <<FK>>
+  * issue_id: int <<FK>>
+  question: string
+  desc: string
+  desc_disabled: boolean
+  debug: string
+  debug_disabled: boolean
+  solution: string
+  proof: string
+  proof_disabled: boolean
+}
+
+entity "idk_tags" as tag {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  label: nvarchar(32) <<unique mul-index-2>>
+  type: char(6) <<unique mul-index-2>>
+}
+
+entity "idk_tag_map" as tm {
+  * id: int <<PK>>
+  created_at: bigint
+  deleted_at: datetime
+  --
+  * tag: int <<unique mul-index-3, FK>>
+  assets_id: varchar(21) <<unique mul-index-3>>
+}
+
+entity "idk_resource_groups" as grp {
+  * id: varchar(21) <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  name: nvarchar(32) <<unique index>>
+}
+
+entity "idk_res_images" as img {
+  * id: varchar(21) <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  * res_group_id: varchar(21) <<FK>>
+  url: varchar(256)
+  ext: varchar(8)
+  size: bigint
+  checksum: varchar(128)
+  watermark: nvarchar(32)
+}
+
+entity "idk_res_attachments" as att {
+  * id: varchar(21) <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  * res_group_id: varchar(21) <<FK>>
+  url: varchar(256)
+  ext: varchar(8)
+  size: bigint
+  checksum: varchar(128)
+  name: nvarchar(32)
+}
+
+entity "idk_subj_share" as share {
+  * id: int <<PK>>
+    created_at: bigint
+    updated_at: bigint
+  --
+  subj_id: varchar(21) <<FK>>
+  tab: int [default 0]
+  type: tinyint(8)
+  expired_at: bigint
+  passphrase: varchar(6)
+}
+
+entity "idk_subj_attachment_map" as attref {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  * subj_id: varchar(21) <<unique mul-index-4, FK>>
+  * att_id: varchar(21) <<unique mul-index-4, FK>>
+  tab: int [default 0]
+}
+
+entity "idk_subj_image_map" as imgref {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  * subj_id: varchar(21) <<unique mul-index-5, FK>>
+  * img_id: varchar(21) <<unique mul-index-5, FK>>
+  tab: int [default 0]
+}
+
+entity "idk_rbac_policies" as rbac {
+  ptype: nvarchar(32) <<index>>
+  v0: nvarchar(512)
+  v1: nvarchar(512)
+  v2: nvarchar(512)
+  v3: nvarchar(512)
+  v4: nvarchar(512)
+  v5: nvarchar(512)
+}
+
+entity "idk_rbac_groups" as rbacgrp {
+  * id: int <<PK>>
+  name: nvarchar(32) <<unique index>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+}
+
+entity "idk_users" as usr {
+  * id: varchar(21) <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  deleted_at: datetime
+  --
+  name: nvarchar(16) <<unique index>>
+  namemonicker: nvarchar(16) <<unique index>>
+  email: varchar(64)
+  phone: varchar(16)
+  secret: varchar(128)
+}
+
+entity "idk_user_group_map" as usrgrp {
+  * id: int <<PK>>
+  created_at: bigint
+  updated_at: bigint
+  --
+  * user_id: varchar(21) <<unique mul-index-7, FK>>
+  * group_id: int <<unique mul-index-7, FK>>
+}
+
+' For future
+entity "idk_oauth2" as oauth2 {
+  * app_id: varchar(21) <<PK>>
+  resource_ids: varchar(256)
+  app_secret: varchar(256)
+  scope: varchar(256)
+  grant_types: varchar(256)
+  redirect_url: varchar(256)
+  authorities: varchar(256)
+  access_token_validity: int(11)
+  refresh_token_validity: int(11)
+  additional_information: varchar(4096)
+  auto_approve_scopes: varchar(256)
+}
+
+entity "idk_oauth2_access_token" {
+  * authentication_id: varchar(128)
+  token_id: varchar(256)
+  token: blob
+  user_name: nvarchar(256)
+  client_id: varchar(256)
+  authentication: blob
+  refresh_token: varchar(256)
+}
+
+entity "idk_oauth2_approvals" {
+  user_id: varchar(256)
+  client_id: varchar(256)
+  scope: varchar(256)
+  status: varchar(256)
+  expires_at: datetime
+  last_modified_at: datetime
+}
+
+entity "idk_oauth2_client_details" {
+  * client_id: varchar(128) <<PK>>
+  resource_ids: varchar(256)
+  client_secret: varchar(256)
+  scope: varchar(256)
+  authorized_grant_types: varchar(256)
+  web_server_redirect_uri: varchar(256)
+  authorities: varchar(256)
+  access_token_validity: int(11)
+  refresh_token_validity: int(11)
+  additional_information: varchar(4096)
+  auto_approve: varchar(256)
+}
+
+entity "idk_oauth2_client_token" {
+  * authentication_id: varchar(256) <<PK>>
+  token: blob
+  token_id: varchar(256)
+  user_name: nvarchar(256)
+  client_id: varchar(256)
+}
+
+entity "idk_oauth_code" {
+  code: varchar(256)
+  authentication: blob
+}
+
+entity "idk_oauth2_refresh_token" {
+  token_id: varchar(256)
+  token: blob
+  authentication: blob
+}
+
+' relations
+' |o-- zero or one
+' ||-- exactly one
+' }o-- zero or many
+' }|-- one or many
+ws ||..|{ cl
+cl ||..|{ subj
+
+subj ||..|{ md
+subj ||..|| tab
+subj ||..|| issue
+
+tab ||..|{ code
+code ||..|| lang
+issue ||..|{ issue_ct
+
+tag }|..|| tm
+
+tm ||..|{ issue
+tm ||..|{ md
+tm ||..|{ tab
+tm ||..|{ img
+tm ||..|{ att
+
+img }|..|| grp
+att }|..|{ grp
+
+share ||..|{ subj
+
+md }|..|{ renref
+renref ||..|{ rendertmpl
+
+imgref ||..|| subj
+imgref ||..|{ img
+
+attref ||..|{ subj
+attref ||..|{ att
+
+@enduml
