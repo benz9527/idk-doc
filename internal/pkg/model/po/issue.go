@@ -4,7 +4,9 @@
 package po
 
 type IssueCore struct {
-	SubjectId string `gorm:"column:subj_id;type:varchar(21);primaryKey;<-;"`
+	BaseMetaNumericId
+	BaseMetaCreatedAt
+	SubjectId string `gorm:"column:subj_id;type:varchar(21);uniqueIndex:idx_issue_id;<-;"`
 	Title     string `gorm:"column:title;type:nvarchar(32);<-;"`
 }
 
@@ -14,7 +16,7 @@ type Issue[T IssueCore] struct {
 }
 
 func (i Issue[T]) TableName() string {
-	return "idk_issue"
+	return "idk_issues"
 }
 
 func (i Issue[T]) GetCore() T {
@@ -30,7 +32,7 @@ func (i Issue[T]) GetCore() T {
 type IssueContentCore struct {
 	AutoIncIdFullMode
 	BaseVersionInfo
-	IssueId             string `gorm:"column:issue_id;type:varchar(21);index:idx_ref_issue_id;<-;"`
+	IssueId             int    `gorm:"column:issue_id;type:int;index:idx_ref_issue_id;<-;"`
 	Question            string `gorm:"column:question;type:text;<-;"`
 	Description         string `gorm:"column:desc;type:text;<-;"`
 	DescriptionDisabled bool   `gorm:"column:desc_disabled;type:boolean;<-;"`

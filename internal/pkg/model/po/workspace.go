@@ -15,5 +15,5 @@ type Workspace struct {
 // TableName
 // Provide static table name.
 func (w Workspace) TableName() string {
-	return "idk_workspace"
+	return "idk_workspaces"
 }

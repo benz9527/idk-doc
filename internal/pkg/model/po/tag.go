@@ -8,24 +8,35 @@ package po
 // the second 4 char present the sub source type.
 type Tag struct {
 	AutoIncIdFullMode
-	Label string `gorm:"column:label;type:nvarchar(32);index:idx_tag_label_type_mixed;<-;"`
-	Type  string `gorm:"column:type;type:char(6);index:idx_tag_label_type_mixed;<-;"`
+	Label string `gorm:"column:label;type:nvarchar(32);uniqueIndex:idx_tag_label_type_mixed;<-;"`
+	Type  string `gorm:"column:type;type:char(6);uniqueIndex:idx_tag_label_type_mixed;<-;"`
 }
 
 func (t Tag) TableName() string {
-	return "idk_tag"
+	return "idk_tags"
 }
 
-// TagMap
+// TagMapCore
 // Without the foreign key definition directly.
-// Actually, idk will use the table of "idk_tag" with other assets tables'
+// Actually, idk will use the table of "idk_tags" with other assets tables'
 // primary key to compose the data.
-type TagMap struct {
+type TagMapCore struct {
 	BaseMetaNumericId
+	BaseMetaCreatedAt
+	BaseMetaDeletedAt
 	AssetsId string `gorm:"column:assets_id;type:varchar(21);index:idx_tag_map_mixed;<-;"`
 	TagId    uint   `gorm:"column:tag_id;type:int;index:idx_tag_map_mixed;<-;"`
 }
 
-func (t TagMap) TableName() string {
+type TagMap[T TagMapCore] struct {
+	Core T    `gorm:"embedded;"`
+	Tag  *Tag `gorm:"foreignKey:TagId;"`
+}
+
+func (t TagMap[T]) TableName() string {
 	return "idk_tag_map"
+}
+
+func (t TagMap[T]) GetCore() T {
+	return t.Core
 }

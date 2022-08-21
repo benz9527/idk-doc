@@ -9,10 +9,11 @@ import "github.com/benz9527/idk-doc/internal/pkg/consts"
 // All type of files have to relate with this intermedia table.
 // Different file has diverse table definition.
 type SubjectIdMapCore struct {
-	BaseMetaStringId                 // Subject id.
-	Type             consts.FileType `gorm:"column:file_type;type:tinyint(8);<-;"`
-	WorkspaceId      string          `gorm:"column:ws_id;type:varchar(21);index:idx_subj_ids;priority:10;<-;"`
-	CatalogId        string          `gorm:"column:catalog_id;type:varchar(21);index:idx_subj_ids;priority:11;<-;"`
+	BaseMetaStringId // Subject id.
+	BaseMetaCreatedAt
+	Type        consts.FileType `gorm:"column:file_type;type:tinyint(8);<-;"`
+	WorkspaceId string          `gorm:"column:ws_id;type:varchar(21);index:idx_subj_ids;priority:10;<-;"`
+	CatalogId   string          `gorm:"column:catalog_id;type:varchar(21);index:idx_subj_ids;priority:11;<-;"`
 }
 
 type SubjectIdMap[T SubjectIdMapCore] struct {

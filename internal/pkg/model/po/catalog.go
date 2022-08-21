@@ -36,11 +36,11 @@ func (c CatalogCore) IsPoCore() bool {
 type Catalog[T CatalogCore] struct {
 	Core      T          `gorm:"embedded;"`
 	Workspace *Workspace `gorm:"foreignKey:WorkspaceId;"`
-	//Catalog   *T         `gorm:"foreignKey:GoBackCatalogId;"` // Only an exists and foreign table could create fk constraint.
+	// Catalog   *T         `gorm:"foreignKey:GoBackCatalogId;"` // Only an exists and foreign table could create fk constraint.
 }
 
 func (c Catalog[T]) TableName() string {
-	return "idk_catalog"
+	return "idk_catalogs"
 }
 
 func (c Catalog[T]) GetCore() T {

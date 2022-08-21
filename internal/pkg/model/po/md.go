@@ -36,7 +36,7 @@ type MarkdownCore struct {
 	AutoIncIdFullMode
 	BaseVersionInfo
 	SubjectId string `gorm:"column:subj_id;type:varchar(21);<-;"`
-	Title     string `gorm:"column:title;type:nvarchar(64);index:idx_md_name_ver;<-;"`
+	Title     string `gorm:"column:title;type:nvarchar(64);uniqueIndex:idx_md_name_ver;<-;"`
 	Content   string `gorm:"column:content;type:text;<-;"`
 }
 
@@ -46,7 +46,7 @@ type Markdown[T MarkdownCore] struct {
 }
 
 func (m Markdown[T]) TableName() string {
-	return "idk_md"
+	return "idk_mds"
 }
 
 func (m Markdown[T]) GetCore() T {

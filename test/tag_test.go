@@ -26,7 +26,7 @@ func Test_init_tags_in_db(t *testing.T) {
 				asserter.NotNil(dbClient)
 				err := dbClient.AutoMigrate(
 					&po.Tag{},
-					&po.TagMap{},
+					&po.TagMap[po.TagMapCore]{},
 				)
 				asserter.Nil(err)
 

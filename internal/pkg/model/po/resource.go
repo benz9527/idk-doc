@@ -5,11 +5,11 @@ package po
 
 type ResourceGroup struct {
 	NanoIdFullMode
-	Name string `gorm:"column:name;type:nvarchar(32);index:idx_img_grp_name;<-;"`
+	Name string `gorm:"column:name;type:nvarchar(32);uniqueIndex:idx_img_grp_name;<-;"`
 }
 
 func (i ResourceGroup) TableName() string {
-	return "idk_res_group"
+	return "idk_res_groups"
 }
 
 // ResourceCore
@@ -41,7 +41,7 @@ type Image[T ImageCore] struct {
 }
 
 func (i Image[T]) TableName() string {
-	return "idk_res_image"
+	return "idk_res_images"
 }
 
 func (i Image[T]) GetCore() T {
@@ -59,7 +59,7 @@ type Attachment[T AttachmentCore] struct {
 }
 
 func (a Attachment[T]) TableName() string {
-	return "idk_res_attachment"
+	return "idk_res_attachments"
 }
 
 func (a Attachment[T]) GetCore() T {

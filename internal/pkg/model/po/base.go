@@ -21,11 +21,11 @@ type BaseMetaStringId struct {
 }
 
 type BaseMetaCreatedAt struct {
-	CreatedAt int64 `gorm:"column:created_at;autoCreateTime:milli;<-"`
+	CreatedAt int64 `gorm:"column:created_at;type:bigint;autoCreateTime:milli;<-"`
 }
 
 type BaseMetaUpdatedAt struct {
-	UpdatedAt int64 `gorm:"column:updated_at;autoUpdateTime:milli;<-"`
+	UpdatedAt int64 `gorm:"column:updated_at;type:bigint;autoUpdateTime:milli;<-"`
 }
 
 type BaseMetaDeletedAt struct {
