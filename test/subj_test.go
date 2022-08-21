@@ -15,7 +15,7 @@ import (
 	"github.com/benz9527/idk-doc/internal/pkg/model/po"
 )
 
-func Test_init_file_id_map_in_db(t *testing.T) {
+func Test_init_subj_id_map_in_db(t *testing.T) {
 	asserter := assert.New(t)
 	var opts []fx.Option
 
@@ -28,17 +28,17 @@ func Test_init_file_id_map_in_db(t *testing.T) {
 				err := dbClient.AutoMigrate(
 					&po.Workspace{},
 					&po.Catalog[po.CatalogCore]{},
-					&po.FileIdMap[po.FileIdMapCore]{},
+					&po.SubjectIdMap[po.SubjectIdMapCore]{},
 				)
 				asserter.Nil(err)
 
 				asserter.Nil(callSQLFiles(dbClient,
 					"V1__dev_only_for_ws_init.sql",
 					"V2__dev_catalog_with_ws_init.sql",
-					"V3__dev_for_file_id_map_init.sql",
+					"V3__dev_for_subj_init.sql",
 				))
 
-				var idMapList []po.FileIdMap[po.FileIdMapCore]
+				var idMapList []po.SubjectIdMap[po.SubjectIdMapCore]
 				err = dbClient.Where("file_type = ?", consts.FILE_TYPE_MD).
 					Find(&idMapList).Error
 				asserter.Nil(err)

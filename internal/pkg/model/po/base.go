@@ -45,3 +45,7 @@ type AutoIncIdFullMode struct {
 	BaseMetaUpdatedAt
 	BaseMetaDeletedAt
 }
+
+type BaseVersionInfo struct {
+	Version string `gorm:"column:version;type:char(13);index:idx_md_name_ver;<-;"` // VYYYY.MMDD.00
+}

@@ -22,9 +22,9 @@ type CodeTabCore struct {
 }
 
 type CodeTab[T CodeTabCore] struct {
-	Core T                         `gorm:"embedded;"`
-	Lang *CodeLang                 `gorm:"foreignKey:LangTypeId;"`
-	Map  *FileIdMap[FileIdMapCore] `gorm:"foreignKey:CodeSpaceId;"`
+	Core T                               `gorm:"embedded;"`
+	Lang *CodeLang                       `gorm:"foreignKey:LangTypeId;"`
+	Map  *SubjectIdMap[SubjectIdMapCore] `gorm:"foreignKey:CodeSpaceId;"`
 }
 
 func (c CodeTab[T]) TableName() string {
@@ -37,16 +37,16 @@ func (c CodeTab[T]) GetCore() T {
 
 type CodeCore struct {
 	AutoIncIdFullMode
-	CodeSpaceId string `gorm:"column:code_space_id;type:varchar(21);<-;"`
-	CodeTabId   int    `gorm:"column:code_tab_id;type:int;<-;"`
-	Content     string `gorm:"column:content;type:text;<-;"`
-	Version     string `gorm:"column:version;type:char(13);index:idx_md_name_ver;<-;"` // VYYYY.MMDD.00
+	BaseVersionInfo
+	SubjectId string `gorm:"column:subject_id;type:varchar(21);<-;"`
+	TabId     int    `gorm:"column:tab_id;type:int;<-;"`
+	Content   string `gorm:"column:content;type:text;<-;"`
 }
 
 type Code[T CodeCore] struct {
-	Core T                         `gorm:"embedded;"`
-	Map  *FileIdMap[FileIdMapCore] `gorm:"foreignKey:CodeSpaceId;"`
-	Tab  *CodeTab[CodeTabCore]     `gorm:"foreignKey:CodeTabId;"`
+	Core T                               `gorm:"embedded;"`
+	Map  *SubjectIdMap[SubjectIdMapCore] `gorm:"foreignKey:SubjectId;"`
+	Tab  *CodeTab[CodeTabCore]           `gorm:"foreignKey:TabId;"`
 }
 
 func (c Code[T]) TableName() string {

@@ -4,13 +4,13 @@
 package po
 
 type IssueCore struct {
-	SpaceId string `gorm:"column:space_id;type:varchar(21);primaryKey;<-;"`
-	Title   string `gorm:"column:title;type:nvarchar(32);<-;"`
+	SubjectId string `gorm:"column:subj_id;type:varchar(21);primaryKey;<-;"`
+	Title     string `gorm:"column:title;type:nvarchar(32);<-;"`
 }
 
 type Issue[T IssueCore] struct {
-	Core T                         `gorm:"embedded;"`
-	Map  *FileIdMap[FileIdMapCore] `gorm:"foreignKey:IssueSpaceId;"`
+	Core T                               `gorm:"embedded;"`
+	Map  *SubjectIdMap[SubjectIdMapCore] `gorm:"foreignKey:SubjectId;"`
 }
 
 func (i Issue[T]) TableName() string {
@@ -29,6 +29,7 @@ func (i Issue[T]) GetCore() T {
 // @field Proof Describes a post verification for solution, describe the effect after bug fixing.
 type IssueContentCore struct {
 	AutoIncIdFullMode
+	BaseVersionInfo
 	IssueId             string `gorm:"column:issue_id;type:varchar(21);index:idx_ref_issue_id;<-;"`
 	Question            string `gorm:"column:question;type:text;<-;"`
 	Description         string `gorm:"column:desc;type:text;<-;"`
@@ -38,7 +39,6 @@ type IssueContentCore struct {
 	Solution            string `gorm:"column:solution;type:text;<-;"`
 	Proof               string `gorm:"column:proof;type:text;<-;"`
 	ProofDisabled       bool   `gorm:"column:proof_disabled;type:boolean;<-;"`
-	Version             string `gorm:"column:version;type:char(13);index:idx_md_name_ver;<-;"` // VYYYY.MMDD.00
 }
 
 type IssueContent[T IssueContentCore] struct {

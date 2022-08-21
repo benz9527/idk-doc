@@ -34,15 +34,15 @@ func (m MarkdownTemplate) TableName() string {
 // will save into database.
 type MarkdownCore struct {
 	AutoIncIdFullMode
-	FileIdMapKey string `gorm:"column:id_map_key;type:varchar(21);<-;"`
-	Title        string `gorm:"column:title;type:nvarchar(64);index:idx_md_name_ver;<-;"`
-	Content      string `gorm:"column:content;type:text;<-;"`
-	Version      string `gorm:"column:version;type:char(13);index:idx_md_name_ver;<-;"` // VYYYY.MMDD.00
+	BaseVersionInfo
+	SubjectId string `gorm:"column:subj_id;type:varchar(21);<-;"`
+	Title     string `gorm:"column:title;type:nvarchar(64);index:idx_md_name_ver;<-;"`
+	Content   string `gorm:"column:content;type:text;<-;"`
 }
 
 type Markdown[T MarkdownCore] struct {
-	Core T                         `gorm:"embedded;"`
-	Map  *FileIdMap[FileIdMapCore] `gorm:"foreignKey:FileIdMapKey;"`
+	Core T                               `gorm:"embedded;"`
+	Map  *SubjectIdMap[SubjectIdMapCore] `gorm:"foreignKey:SubjectId;"`
 }
 
 func (m Markdown[T]) TableName() string {
