@@ -11,7 +11,7 @@ type CodeLang struct {
 }
 
 func (c CodeLang) TableName() string {
-	return "idk_code_lang"
+	return "idk_code_languages"
 }
 
 type CodeTabCore struct {

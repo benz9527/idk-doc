@@ -83,7 +83,7 @@ entity "idk_mds" as md {
   content: text
 }
 
-entity "idk_code_lang" as lang {
+entity "idk_code_languages" as lang {
   * id: int <<PK>>
   created_at: bigint
   updated_at: bigint
